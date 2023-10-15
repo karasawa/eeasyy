@@ -1,0 +1,18 @@
+{
+	"name": "api-vscode",
+	"dockerComposeFile": "../../docker-compose.yml",
+	"service": "api",
+	"workspaceFolder": "/api",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"MS-CEINTL.vscode-language-pack-ja",
+				"mhutchie.git-graph",
+				"esbenp.prettier-vscode",
+				"dbaeumer.vscode-eslint",
+				"Prisma.prisma"
+			]
+		}
+	},
+	"shutdownAction": "none"
+}
