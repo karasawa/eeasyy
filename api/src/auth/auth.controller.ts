@@ -5,29 +5,37 @@ import {
   Get,
   UseGuards,
   Request,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { CreateUserDto, LoginUserDto } from 'src/dto/user/user.dto';
+import { CreateUserDto } from 'src/dto/user/user.dto';
 import { User } from 'src/interface/user/user.interface';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
+import { Public } from './jwt-auth.decorator';
+import { ValidationPipe } from 'src/pipe/validation/validation.pipe';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.authService.signUp(createUserDto);
   }
 
+  @Public()
+  @UseGuards(LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto) {
-    return await this.authService.login(loginUserDto);
+  async login(@Request() req) {
+    return this.authService.login(req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async test(@Request() req) {
-    console.log(req);
+  @HttpCode(HttpStatus.OK)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return req.user;
   }
 }

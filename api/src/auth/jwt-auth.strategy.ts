@@ -10,10 +10,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: jwtConstants.secret,
+      usernameField: 'email',
     });
   }
 
-  async validate(payload: { sub: string; username: string }) {
-    return { userId: payload.sub, username: payload.username };
+  async validate(payload: { sub: string; email: string }) {
+    return { id: +payload.sub, email: payload.email };
   }
 }

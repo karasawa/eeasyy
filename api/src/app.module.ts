@@ -12,11 +12,24 @@ import { SampleController } from './sample/sample.controller';
 import { SampleMiddleware } from './sample/sample.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './intercepter/logging/logging.intercepter';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [SampleModule, AuthModule, UserModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

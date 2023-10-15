@@ -5,3 +5,8 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ValidatedUser {
+  id: number;
+  email: string;
+}
