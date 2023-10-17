@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Req } from '@nestjs/common';
-import { AppService, test, test2 } from './app.service';
+import { Controller, Post, Req } from '@nestjs/common';
+import { AppService } from './app.service';
 import { Request } from 'express';
-import { HttpCode, Param } from '@nestjs/common/decorators/http';
+import { HttpCode } from '@nestjs/common/decorators/http';
 
 export type test3 = {
   c: boolean;
@@ -21,7 +21,6 @@ export class AppController {
   @Post()
   @HttpCode(204)
   postHello(@Req() request: Request): void {
-    console.log(request);
     return;
   }
 }
