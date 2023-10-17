@@ -24,7 +24,10 @@ export class UserService {
     });
   }
 
-  async updateHashedRefreshToken(email: string, hashedRefreshToken: string) {
+  async updateHashedRefreshToken(
+    email: string,
+    hashedRefreshToken: string | null,
+  ): Promise<void> {
     await this.prisma.user.update({
       where: { email },
       data: { hashedRefreshToken },

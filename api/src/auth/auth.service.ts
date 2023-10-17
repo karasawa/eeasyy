@@ -28,12 +28,16 @@ export class AuthService {
     return await this.userService.create(createUserDto);
   }
 
-  async login(user: ValidatedUser) {
+  async login(user: ValidatedUser): Promise<Tokens> {
     const tokens = await this.getTokens(user.email, '' + user.id);
-    await this.updateHashedRefreshToken(user, tokens.refresh_token);
+    await this.updateHashedRefreshToken(user.email, tokens.refresh_token);
     return {
       ...tokens,
     };
+  }
+
+  async logout(user: ValidatedUser): Promise<void> {
+    await this.userService.updateHashedRefreshToken(user.email, null);
   }
 
   async validateUser(
@@ -62,14 +66,12 @@ export class AuthService {
   }
 
   async updateHashedRefreshToken(
-    user: ValidatedUser,
+    email: string,
     refreshToken: string,
   ): Promise<void> {
-    const hashedRefreshToken = bcrypt.hashSync(refreshToken, 10);
-    await this.userService.updateHashedRefreshToken(
-      user.email,
-      hashedRefreshToken,
-    );
+    const salt = await bcrypt.genSalt();
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+    await this.userService.updateHashedRefreshToken(email, hashedRefreshToken);
   }
 
   async refreshToken(
@@ -85,7 +87,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const tokens = await this.getTokens(existedUser.email, '' + existedUser.id);
-    await this.userService.updateHashedRefreshToken(
+    await this.updateHashedRefreshToken(
       existedUser.email,
       tokens.refresh_token,
     );

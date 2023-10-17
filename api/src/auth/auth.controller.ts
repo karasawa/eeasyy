@@ -14,6 +14,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtPublic } from './jwt-auth.decorator';
 import { JwtRefreshAuthGuard } from './jwt-refresh-auth.guard';
+import { Tokens } from 'src/interface/token/token.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -29,15 +30,21 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Request() req) {
+  async login(@Request() req): Promise<Tokens> {
     return this.authService.login(req.user);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('logout')
+  async logout(@Request() req): Promise<void> {
+    return this.authService.logout(req.user);
   }
 
   @JwtPublic()
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  async refresh(@Request() req) {
+  async refresh(@Request() req): Promise<Tokens> {
     return this.authService.refreshToken(req.user, req.headers.authorization);
   }
 
