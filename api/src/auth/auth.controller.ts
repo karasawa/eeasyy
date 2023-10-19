@@ -11,8 +11,8 @@ import {
 import { CreateUserDto } from 'src/dto/user/user.dto';
 import { CreateUser } from 'src/interface/user/user.interface';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local-auth.guard';
-import { JwtPublic } from './jwt-auth.decorator';
+import { LocalAuthGuard } from '../guard/auth/local-auth.guard';
+import { JwtPublic } from '../decorator/auth/jwt-auth.decorator';
 import { JwtRefreshAuthGuard } from './jwt-refresh-auth.guard';
 import { Tokens } from 'src/interface/token/token.interface';
 
@@ -34,6 +34,8 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @JwtPublic()
+  @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('logout')
   async logout(@Request() req): Promise<void> {
